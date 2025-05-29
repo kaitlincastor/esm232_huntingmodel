@@ -16,6 +16,8 @@ execute:
 
 ## Model Implementation
 
+### Import libraries and functions
+
 ```{r}
 # Load required libraries
 library(sensitivity)
@@ -27,7 +29,21 @@ library(here)
 source(here("R","lotvmodH.R"))
 ```
 
+### Function parameters
+
+```{r}
+
+```
+
 ## Model Exploration
+
+### different hunting rates
+
+```{r}
+
+```
+
+### different minimum prey populations
 
 ```{r}
 
