@@ -8,7 +8,8 @@
 #'  \emph{eff} is the rate of ingestion of prey by predators
 #'  \emph{alpha} is a interaction coefficient (higher values greater interaction
 #'  \emph{hunt} is the rate the prey is being hunted
-# ’  \emph{pmort}  mortality rate of predictor population
+#'  \emph{pmort}  mortality rate of predictor population
+#'  \emph{minprey} minimum prey population input that must be met before hunting is allowed.
 #'
 #' @return  lotvmod returns a list containing the following components
 #' \describe{
@@ -16,9 +17,14 @@
 #' \item{dpred}{rate of change of preditor populutation}
 #' }
 
-lotvmodK <- function(t, pop, pars) {
+lotvmodH <- function(t, pop, pars) {
   with(as.list(c(pars, pop)), {
-    dprey <- rprey * (1 - prey / K) * prey - alpha * prey * pred - hunt * prey
+    if (prey < minprey) {
+      hunt <- 0
+    } else {
+      hunt <- hunt
+    } 
+    dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
     dpred <- eff * alpha * prey * pred - pmort * pred
     return(list(c(dprey, dpred)))
   })
