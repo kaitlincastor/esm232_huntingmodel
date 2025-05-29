@@ -1,0 +1,36 @@
+---
+title: "hunting"
+author: "Jackson Coldiron and Kaitlin Castor"
+editor: visual
+format: 
+  html:
+    code-fold: true
+    embed-resources: true
+    theme: sandstone
+    toc: false
+execute:
+  freeze: auto 
+  warning: false
+  message: false
+---
+
+## Model Implementation
+
+```{r}
+# Load required libraries
+library(sensitivity)
+library(tidyverse)
+library(deSolve)
+```
+
+## Model Exploration
+
+```{r}
+
+```
+
+## Model Stability Explanation
+
+```{r}
+
+```
