@@ -21,6 +21,10 @@ execute:
 library(sensitivity)
 library(tidyverse)
 library(deSolve)
+library(here)
+
+# Import function
+source(here("R","lotvmodH.R"))
 ```
 
 ## Model Exploration
@@ -30,7 +34,3 @@ library(deSolve)
 ```
 
 ## Model Stability Explanation
-
-```{r}
-
-```
