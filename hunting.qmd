@@ -24,9 +24,6 @@ library(sensitivity)
 library(tidyverse)
 library(deSolve)
 library(here)
-
-# Import function
-source(here("R","lotvmodH.R"))
 ```
 
 ### Prepare function
@@ -37,6 +34,8 @@ source(here("R","lotvmodH.R"))
 
 # Add paramters
 pars <- c(rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
+
+# stability = when predator and prey derivitives equal zero
 ```
 
 ## Model Exploration
@@ -50,6 +49,8 @@ pars <- c(rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
 ### different minimum prey populations
 
 ```{r}
+# Look at different minimum prey populations (before hunting is allowed) --> how does it effect stability of both populations?
+
 
 ```
 
