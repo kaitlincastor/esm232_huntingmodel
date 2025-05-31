@@ -24,18 +24,19 @@ library(sensitivity)
 library(tidyverse)
 library(deSolve)
 library(here)
+library()
 ```
 
 ### Prepare function
 
 ```{r}
-# Import function
+#import function
 source(here("R","lotvmodH.R"))
 
-# Add paramters
+#add paramters
 pars <- c(rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
 
-# stability = when predator and prey derivitives equal zero
+#population stability = when predator and prey derivitives equal zero
 ```
 
 ## Model Exploration
@@ -49,7 +50,34 @@ pars <- c(rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
 ### different minimum prey populations
 
 ```{r}
-# Look at different minimum prey populations (before hunting is allowed) --> how does it effect stability of both populations?
+#look at different minimum prey populations (before hunting is allowed) --> how does it effect stability of both populations?
+
+#add pars
+pars <- c(hunt = 0.03 , rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
+
+#current population
+pop <- c(prey = 75, pred = 55)
+
+#maintaining a population 50 years into the future
+days = seq(from=1,to=18250) 
+
+#testing derivative over a range of minimum prey populations
+findstable <- data.frame(minprey = seq(from = 1, to = 50, by = 1))
+
+findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = pars, P = .x)))
+
+ggplot(findstable, aes(minprey, dprey)) +
+  geom_point() +
+  geom_hline(yintercept = 0, col = "red") +
+  labs(y = "Derivative\n (Rate of change of prey population) (# of prey/time)", x = "Minimum prey population (# of prey)")
+
+# look at a different hunting rates
+midHrate <- 0.02
+parms <- list(hunt = midHrate, rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
+findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = parms)))
+highHrate <- 0.05
+parms <- list(hunt = highHrate, rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
+findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = parms)))
 
 
 ```
