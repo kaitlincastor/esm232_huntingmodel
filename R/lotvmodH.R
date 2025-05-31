@@ -17,15 +17,24 @@
 #' \item{dpred}{rate of change of preditor populutation}
 #' }
 
+# function(t, pop, pars) {
+#   with(as.list(c(pars, pop)), {
+#     if (prey < minprey) {
+#       hunt <- 0
+#     } else {
+#       hunt <- hunt
+#     } 
+#     dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
+#     dpred <- eff * alpha * prey * pred - pmort * pred
+#     return(list(c(dprey, dpred)))
+#   })
+
+
 lotvmodH <- function(t, pop, pars) {
   with(as.list(c(pars, pop)), {
-    if (prey < minprey) {
-      hunt <- 0
-    } else {
-      hunt <- hunt
-    } 
-    dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
-    dpred <- eff * alpha * prey * pred - pmort * pred
-    return(list(c(dprey, dpred)))
+    ifelse(prey < minprey, "too low", "okay")
+  dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
+  dpred <- eff * alpha * prey * pred - pmort * pred
+  return(list(c(dprey, dpred)))
   })
 }
