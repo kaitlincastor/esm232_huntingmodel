@@ -16,7 +16,7 @@ execute:
 
 ## Model Implementation
 
-### Import libraries and functions
+### Import libraries
 
 ```{r}
 # Load required libraries
@@ -29,10 +29,14 @@ library(here)
 source(here("R","lotvmodH.R"))
 ```
 
-### Function parameters
+### Prepare function
 
 ```{r}
+# Import function
+source(here("R","lotvmodH.R"))
 
+# Add paramters
+pars <- c(rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
 ```
 
 ## Model Exploration
