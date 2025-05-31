@@ -1,30 +1,22 @@
 #' Lot. Voltera Model with hunting 
 #'
-#' function computes the rate of change of populations in a predictor prey interaction
-#' @param t  time (days)
-#' @param pop datatype list initial conditions; list with two values prey=number of prey and pred=number of predictor
-#' @param pars datatype list  coefficient in Lotka-Voltera pars$rprey, pars$alpha, pars$eff, par$pmort
-#'  \emph{rprey} is growth rate of prey population;
-#'  \emph{eff} is the rate of ingestion of prey by predators
-#'  \emph{alpha} is a interaction coefficient (higher values greater interaction
-#'  \emph{hunt} is the rate the prey is being hunted
-#'  \emph{pmort}  mortality rate of predictor population
-#'  \emph{minprey} minimum prey population input that must be met before hunting is allowed.
-#'
-#' @return  lotvmod returns a list containing the following components
-#' \describe{
-#' \item{dprey}{rate of change of prey populutation}
-#' \item{dpred}{rate of change of preditor populutation}
-#' }
+#' Computes the rate of change of populations in a predator-prey interaction with hunting.
+#' @param t Time (not used but required by ode solver)
+#' @param pop Named list with two values: prey = number of prey, pred = number of predators
+#' @param pars Named list of parameters: rprey, alpha, eff, pmort, hunt, minprey, K
+#' @return List of rates of change for prey and predator
 
 lotvmodH <- function(t, pop, pars) {
   with(as.list(c(pars, pop)), {
-    if (prey < minprey) {
-      hunt <- 0
-    } else {
-      hunt <- hunt
-    } 
-    dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
+    
+    # Only allow hunting when prey population exceeds threshold 
+    actualhunt <- ifelse(prey >= minprey, hunt, 0)
+    
+    prey <- max(prey, 0)
+    pred <- max(pred, 0)
+    
+      # Rate of change equations
+    dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (actualhunt * prey)
     dpred <- eff * alpha * prey * pred - pmort * pred
     return(list(c(dprey, dpred)))
   })

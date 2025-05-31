@@ -16,7 +16,7 @@ execute:
 
 ## Model Implementation
 
-### Import libraries
+#### Import libraries
 
 ```{r}
 # Load required libraries
@@ -24,28 +24,73 @@ library(sensitivity)
 library(tidyverse)
 library(deSolve)
 library(here)
-library()
 ```
 
-### Prepare function
+#### Prepare function
 
 ```{r}
 #import function
 source(here("R","lotvmodH.R"))
 
-#add paramters
-pars <- c(rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
-
-#population stability = when predator and prey derivitives equal zero
 ```
 
 ## Model Exploration
 
-### different hunting rates
+#### Testing Different Hunting Rates
 
 ```{r}
+# Base parameters
+pars1 <- list(
+  rprey = 0.95,
+  alpha = 0.01,
+  eff = 0.6,
+  pmort = 0.4,
+  K = 2000,
+  minprey = 300  # You can vary this later too
+)
 
+# Initial population sizes
+init_pop <- c(prey = 1000, pred = 100)
+
+# Time steps (in years)
+times <- seq(0, 50, by = 1)
+
+# Define hunting rates to explore
+hunt_vals <- seq(0, 0.5, by = 0.05)  # Proportional hunting (0 = none, 0.5 = 50% of prey removed yearly)
+
+# Function to run simulation and check stability
+run_sim <- function(hunt_val) {
+  pars <- c(pars1, hunt = hunt_val)
+  out <- ode(y = init_pop, times = times, func = lotvmodH, parms = pars)
+  out <- as.data.frame(out)
+  
+  final_prey <- tail(out$prey, 1)
+  final_pred <- tail(out$pred, 1)
+  
+  stable <- ifelse(final_prey > 100 & final_pred > 100, TRUE, FALSE)
+  return(data.frame(hunt = hunt_val, prey_end = final_prey, pred_end = final_pred, stable = stable))
+}
+
+# Run over all hunting values
+results <- map_dfr(hunt_vals, run_sim)
 ```
+
+```{r}
+#| fig-width: 10
+#| fig-cap: "__Figure 1: Final predator and prey population sizes after 50 years under varying hunting rates__. Lines represent the final population size for prey (blue) and predators (red), while black X marks indicate scenarios where both populations remained above 100 individuals—our threshold for ecological stability. As hunting intensity increases, prey population declines and predator viability diminishes, highlighting a critical trade-off between harvest pressure and long-term population persistence."
+
+# Plotting final populations
+ggplot(results, aes(x = hunt)) +
+  geom_line(aes(y = prey_end, color = "Prey")) +
+  geom_line(aes(y = pred_end, color = "Predator")) +
+  geom_point(aes(y = ifelse(stable, 100, NA)), shape = 4, size = 3, color = "black") +
+  labs(x = "Hunting Rate (proportion of prey per year)",
+       y = "Population Size",
+       color = "Species") +
+  theme_minimal()
+```
+
+In testing different hunting rates, we assumed a minimum prey population of 300, which is the threshold below which hunting is not allowed. We defined stability as both populations being above 100 individuals at the end of the simulation period (50 years). We can begin to see that the optimal hunting rate is 0.2 as the X marks the stability point. This is where both populations are stable and the prey population is maximized.
 
 ### different minimum prey populations
 
@@ -82,4 +127,8 @@ findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, po
 
 ```
 
+
+
 ## Model Stability Explanation
+
+
