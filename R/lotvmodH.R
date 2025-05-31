@@ -26,12 +26,14 @@ lotvmodH <- function(t, pop, pars) {
     # Only allow hunting when prey population exceeds threshold 
     actualhunt <- ifelse(prey >= minprey, hunt, 0)
     
+    # Prevent negative population values
     prey <- max(prey, 0)
     pred <- max(pred, 0)
     
       # Rate of change equations
     dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (actualhunt * prey)
     dpred <- eff * alpha * prey * pred - pmort * pred
+    
     return(list(c(dprey, dpred)))
 =======
     ifelse(prey < minprey, "too low", "okay")
