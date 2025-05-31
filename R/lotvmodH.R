@@ -6,8 +6,22 @@
 #' @param pars Named list of parameters: rprey, alpha, eff, pmort, hunt, minprey, K
 #' @return List of rates of change for prey and predator
 
+# function(t, pop, pars) {
+#   with(as.list(c(pars, pop)), {
+#     if (prey < minprey) {
+#       hunt <- 0
+#     } else {
+#       hunt <- hunt
+#     } 
+#     dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
+#     dpred <- eff * alpha * prey * pred - pmort * pred
+#     return(list(c(dprey, dpred)))
+#   })
+
+
 lotvmodH <- function(t, pop, pars) {
   with(as.list(c(pars, pop)), {
+<<<<<<< HEAD
     
     # Only allow hunting when prey population exceeds threshold 
     actualhunt <- ifelse(prey >= minprey, hunt, 0)
@@ -19,5 +33,11 @@ lotvmodH <- function(t, pop, pars) {
     dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (actualhunt * prey)
     dpred <- eff * alpha * prey * pred - pmort * pred
     return(list(c(dprey, dpred)))
+=======
+    ifelse(prey < minprey, "too low", "okay")
+  dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
+  dpred <- eff * alpha * prey * pred - pmort * pred
+  return(list(c(dprey, dpred)))
+>>>>>>> b3993c77f6f450db33e3aa4e8b21de491b1979c5
   })
 }

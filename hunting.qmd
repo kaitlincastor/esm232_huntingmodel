@@ -107,9 +107,10 @@ pop <- c(prey = 75, pred = 55)
 days = seq(from=1,to=18250) 
 
 #testing derivative over a range of minimum prey populations
-findstable <- data.frame(minprey = seq(from = 1, to = 50, by = 1))
+minprey = seq(from = 1, to = 50, by = 1)
+findstable <- data.frame(minprey)
 
-findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = pars, P = .x)))
+findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = pars)))
 
 ggplot(findstable, aes(minprey, dprey)) +
   geom_point() +
