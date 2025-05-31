@@ -21,8 +21,6 @@
 
 lotvmodH <- function(t, pop, pars) {
   with(as.list(c(pars, pop)), {
-<<<<<<< HEAD
-    
     # Only allow hunting when prey population exceeds threshold 
     actualhunt <- ifelse(prey >= minprey, hunt, 0)
     
@@ -35,11 +33,5 @@ lotvmodH <- function(t, pop, pars) {
     dpred <- eff * alpha * prey * pred - pmort * pred
     
     return(list(c(dprey, dpred)))
-=======
-    ifelse(prey < minprey, "too low", "okay")
-  dprey <- rprey * (1 - prey / K) * prey - (alpha * prey * pred) - (hunt * prey)
-  dpred <- eff * alpha * prey * pred - pmort * pred
-  return(list(c(dprey, dpred)))
->>>>>>> b3993c77f6f450db33e3aa4e8b21de491b1979c5
   })
 }
