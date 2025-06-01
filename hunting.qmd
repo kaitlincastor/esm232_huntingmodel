@@ -1,5 +1,5 @@
 ---
-title: "hunting"
+title: "Finding the Optimal Hunting Rate"
 author: "Jackson Coldiron and Kaitlin Castor"
 editor: visual
 format: 
@@ -92,7 +92,7 @@ ggplot(results, aes(x = hunt)) +
 
 In testing different hunting rates, we assumed a minimum prey population of 300, which is the threshold below which hunting is not allowed. We defined stability as both populations being above 100 individuals at the end of the simulation period (50 years). We can begin to see that the optimal hunting rate is 0.2 as the X marks the stability point. This is where both populations are stable and the prey population is maximized.
 
-### different minimum prey populations
+### Testing Different Minimum Prey Populations
 
 ```{r}
 #look at different minimum prey populations (before hunting is allowed) --> how does it effect stability of both populations?
