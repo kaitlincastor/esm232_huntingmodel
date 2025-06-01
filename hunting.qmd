@@ -98,38 +98,50 @@ In testing different hunting rates, we assumed a minimum prey population of 300,
 #look at different minimum prey populations (before hunting is allowed) --> how does it effect stability of both populations?
 
 #add pars
-pars <- c(hunt = 0.03 , rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
+pars2 <- list(hunt = 0.2 , rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, K = 2000)
 
-#current population
-pop <- c(prey = 75, pred = 55)
+#initial population
+init_pop <- c(prey = 1000, pred = 100)
 
 #maintaining a population 50 years into the future
-days = seq(from=1,to=18250) 
+times <- seq(0, 50, by = 1)
 
 #testing derivative over a range of minimum prey populations
-minprey = seq(from = 1, to = 50, by = 1)
-findstable <- data.frame(minprey)
+minprey_vals = seq(from = 100, to = 500, by = 15)
 
-findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = pars)))
 
-ggplot(findstable, aes(minprey, dprey)) +
-  geom_point() +
-  geom_hline(yintercept = 0, col = "red") +
-  labs(y = "Derivative\n (Rate of change of prey population) (# of prey/time)", x = "Minimum prey population (# of prey)")
+run_sim2 <- function(minprey_vals) {
+  pars <- c(pars2, minprey = minprey_vals)
+  out <- ode(y = init_pop, times = times, func = lotvmodH, parms = pars)
+  out <- as.data.frame(out)
+  
+  final_prey <- tail(out$prey, 1)
+  final_pred <- tail(out$pred, 1)
+  
+  stable <- ifelse(final_prey > 100 & final_pred > 100, TRUE, FALSE)
+  return(data.frame(minprey = minprey_vals, prey_end = final_prey, pred_end = final_pred, stable = stable))
+}
 
-# look at a different hunting rates
-midHrate <- 0.02
-parms <- list(hunt = midHrate, rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
-findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = parms)))
-highHrate <- 0.05
-parms <- list(hunt = highHrate, rprey = 0.95, alpha = 0.01, eff = 0.6, pmort = 0.4, k = 2000)
-findstable$lotvmodH <- unlist(findstable$minprey %>% map(~ lotvmodH(t = days, pop = pop, pars = parms)))
-
+# Run over all minimum prey population values
+results2 <- map_dfr(minprey_vals, run_sim2)
 
 ```
 
+```{r}
+#| fig-width: 10
+#| fig-cap: "__Figure 2: Final predator and prey population sizes after 50 years under varying minimum prey rates__. Lines represent the final population size for prey (blue) and predators (red), while black X marks indicate scenarios where both populations remained above 100 individuals—our threshold for ecological stability. As minimum prey population increases, passing a threshold around 320 prey individuals, populations for both prey and predator become unstable and start to decrease in the long-term."
 
+# Plotting final populations
+ggplot(results2, aes(x = minprey)) +
+  geom_line(aes(y = prey_end, color = "Prey")) +
+  geom_line(aes(y = pred_end, color = "Predator")) +
+  geom_point(aes(y = ifelse(stable, 100, NA)), shape = 4, size = 3, color = "black") +
+  labs(x = "Minimum Prey Population (# of prey)",
+       y = "Population Size",
+       color = "Species") +
+  theme_minimal()
+```
 
 ## Model Stability Explanation
 
-
+The stability of our lotka volterra model is sensitive to different hunting rates and minimum prey population sizes. Defining stability as predator and prey populations remaining above 100 individuals 50 years into the future, 0.2 is the only stable hunting rate. Using this stable hunting rate, we tested how model stability changes with different minimum prey population sizes. Our analysis reveals a minimum prey population size of 145 - 175 and 235 - 310 individuals maintain stable populations. In other words, our prey and predator populations in 50 years, with a hunting level of 20%, is dependent on the minimum prey population.
